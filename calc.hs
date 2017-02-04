@@ -4,16 +4,28 @@ data Stack a = EmptyStack | Push a (Stack a)
 instance (Show a) => Show (Stack a) where
     show = (++ " <-") . show . reverse . toList 
 
-pop :: Stack b -> (b, Stack b)
-pop  EmptyStack = error "Not enough elemenst in stack"
-pop (Push x stack) = (x, stack)
+pop :: Stack b -> (Maybe b, Stack b)
+pop  EmptyStack = (Nothing, EmptyStack)
+pop (Push x stack) = (Just x, stack)
+
+popN :: (Integral a, Eq b) => a -> Stack b -> 
+                              (Maybe [b], Stack b)
+popN _ EmptyStack = (Nothing, EmptyStack)
+popN 1 (Push x stack) = (Just [x], stack)
+popN n (Push x stack)
+    | n < 1 = error "Can't return less than one item"
+    | otherwise = if may == Nothing
+                  then (Nothing, EmptyStack)
+                  else let (Just xs) = may
+                       in (Just (x:xs), stack')
+    where (may, stack') = popN (n - 1) stack
 
 push :: b -> Stack b -> Stack b
 push x stack = Push x stack
 
-showFst :: Stack b -> b
-showFst EmptyStack = error "Not enough elemenst in stack"
-showFst (Push x _) = x
+showFst :: (Show b) => Stack b -> String
+showFst EmptyStack = "Nothing"
+showFst (Push x _) = show x
 
 toList :: Stack b -> [b]
 toList EmptyStack = []
@@ -31,20 +43,50 @@ calc stack = do
             print stack
             calc stack 
         else do
-            let stack' = pars stack comm
+            stack' <- getStack stack $ pars stack comm
             putStr "Out: "
-            print $ showFst stack'
+            putStrLn $ showFst stack'
             calc stack'
 
-pars :: Stack Float -> String -> Stack Float
+getStack :: (Eq a) => Stack a -> Maybe (Stack a) -> 
+                      IO (Stack a)
+getStack stack res = do
+    let stack' = if res == Nothing
+                 then do 
+                     putStrLn "Can't perform operation"
+                     return stack
+                 else do
+                     let (Just stack'') = res
+                     return stack''
+    stack'
+
+pars :: Stack Float -> String -> Maybe (Stack Float)
 pars stack comm
-    | comm == "+" = push (y + x) stack''
-    | comm == "-" = push (y - x) stack''
-    | comm == "*" = push (y * x) stack''
-    | comm == "/" = push (y / x) stack''
-    | comm == "abs" = push (abs x) stack'
-    | comm == "sum" = push (sum $ toList stack) EmptyStack
-    | comm == "swp" = push y $ push x stack''
-    | otherwise = push (read comm :: Float) stack
-    where (x, stack') = pop stack
-          (y, stack'') = pop stack'
+    | comm == "+" = applyBinOp (+) stack
+    | comm == "-" = applyBinOp (-) stack
+    | comm == "*" = applyBinOp (*) stack
+    | comm == "/" = applyBinOp (/) stack
+    | comm == "abs" = applyUnOp abs stack
+    | comm == "sum" = Just $ push (sum $ toList stack) EmptyStack
+    | comm == "swp" = swap stack
+    | otherwise = Just $ push (read comm :: Float) stack
+
+applyUnOp :: (Float -> Float) -> 
+               Stack Float -> Maybe (Stack Float)
+applyUnOp op stack
+    | fst (pop stack) == Nothing = Nothing
+    | otherwise = Just $ push (op x) stack'
+    where (Just x, stack') = pop stack
+
+applyBinOp :: (Float -> Float -> Float) -> 
+               Stack Float -> Maybe (Stack Float)
+applyBinOp op stack
+    | fst (popN 2 stack) == Nothing = Nothing
+    | otherwise = Just $ push (op y x) stack'
+    where (Just [x,y], stack') = popN 2 stack
+
+swap :: Stack Float -> Maybe (Stack Float)
+swap stack
+    | fst (popN 2 stack) == Nothing = Nothing
+    | otherwise = Just $ push y $ push x stack'
+    where (Just [x,y], stack') = popN 2 stack
