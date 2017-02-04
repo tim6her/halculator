@@ -43,6 +43,7 @@ pars stack comm
     | comm == "*" = push (y * x) stack''
     | comm == "/" = push (y / x) stack''
     | comm == "abs" = push (abs x) stack'
+    | comm == "sum" = push (sum $ toList stack) EmptyStack
     | comm == "swp" = push y $ push x stack''
     | otherwise = push (read comm :: Float) stack
     where (x, stack') = pop stack
