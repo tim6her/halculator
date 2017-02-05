@@ -50,15 +50,10 @@ calc stack = do
 
 getStack :: (Eq a) => Stack a -> Maybe (Stack a) -> 
                       IO (Stack a)
-getStack stack res = do
-    let stack' = if res == Nothing
-                 then do 
-                     putStrLn "Can't perform operation"
-                     return stack
-                 else do
-                     let (Just stack'') = res
-                     return stack''
-    stack'
+getStack stack Nothing = do 
+    putStrLn "Can't perform operation"
+    return stack
+getStack _ (Just stack') = return stack'
 
 pars :: Stack Float -> String -> Maybe (Stack Float)
 pars stack comm
@@ -66,9 +61,12 @@ pars stack comm
     | comm == "-" = applyBinOp (-) stack
     | comm == "*" = applyBinOp (*) stack
     | comm == "/" = applyBinOp (/) stack
+    | comm == "^" = applyBinOp (**) stack
+    | comm == "!" = applyUnOp fak stack
     | comm == "abs" = applyUnOp abs stack
     | comm == "sum" = Just $ push (sum $ toList stack) EmptyStack
     | comm == "swp" = swap stack
+    | comm == "clr" = Just EmptyStack
     | otherwise = Just $ push (read comm :: Float) stack
 
 applyUnOp :: (Float -> Float) -> 
@@ -90,3 +88,11 @@ swap stack
     | fst (popN 2 stack) == Nothing = Nothing
     | otherwise = Just $ push y $ push x stack'
     where (Just [x,y], stack') = popN 2 stack
+
+fak :: Float -> Float
+fak x
+    | x' == 0.0 = 1.0
+    | x' == 1.0 = 1.0
+    | x < 0 = error "Negativ factorial"
+    | otherwise = x' * (fak $ x' - 1.0)
+    where x' = (fromIntegral (truncate x :: Int) :: Float)
