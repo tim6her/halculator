@@ -56,38 +56,22 @@ getStack stack Nothing = do
 getStack _ (Just stack') = return stack'
 
 pars :: Stack Float -> String -> Maybe (Stack Float)
+pars (Push x (Push y stack)) "+" = Just $ push (y + x) stack
+pars (Push x (Push y stack)) "-" = Just $ push (y - x) stack
+pars (Push x (Push y stack)) "*" = Just $ push (y * x) stack
+pars (Push x (Push y stack)) "/" = Just $ push (y / x) stack
+pars (Push x (Push y stack)) "^" = Just $ push (y ** x) stack
+pars (Push x stack) "!" = Just $ push (fak x) stack
+pars (Push x stack) "abs" = Just $ push (abs x) stack
+pars stack "sum" = Just $ push (sum $ toList stack) EmptyStack
+pars (Push x (Push y stack)) "swp" = Just $ push y (push x stack)
+pars _ "clr" = Just EmptyStack
 pars stack comm
-    | comm == "+" = applyBinOp (+) stack
-    | comm == "-" = applyBinOp (-) stack
-    | comm == "*" = applyBinOp (*) stack
-    | comm == "/" = applyBinOp (/) stack
-    | comm == "^" = applyBinOp (**) stack
-    | comm == "!" = applyUnOp fak stack
-    | comm == "abs" = applyUnOp abs stack
-    | comm == "sum" = Just $ push (sum $ toList stack) EmptyStack
-    | comm == "swp" = swap stack
-    | comm == "clr" = Just EmptyStack
-    | otherwise = Just $ push (read comm :: Float) stack
+    | contNum comm = Just $ push (read comm :: Float) stack
+    | otherwise = Nothing
 
-applyUnOp :: (Float -> Float) -> 
-               Stack Float -> Maybe (Stack Float)
-applyUnOp op stack
-    | fst (pop stack) == Nothing = Nothing
-    | otherwise = Just $ push (op x) stack'
-    where (Just x, stack') = pop stack
-
-applyBinOp :: (Float -> Float -> Float) -> 
-               Stack Float -> Maybe (Stack Float)
-applyBinOp op stack
-    | fst (popN 2 stack) == Nothing = Nothing
-    | otherwise = Just $ push (op y x) stack'
-    where (Just [x,y], stack') = popN 2 stack
-
-swap :: Stack Float -> Maybe (Stack Float)
-swap stack
-    | fst (popN 2 stack) == Nothing = Nothing
-    | otherwise = Just $ push y $ push x stack'
-    where (Just [x,y], stack') = popN 2 stack
+contNum :: String -> Bool
+contNum comm = any (\ n -> n `elem` comm) ['0'..'9']
 
 fak :: Float -> Float
 fak x
