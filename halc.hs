@@ -46,7 +46,7 @@ calc stack = do
             print stack
             calc stack 
         else do
-            stack' <- getStack stack $ pars stack comm
+            stack' <- getStack stack $ parsing (Just stack) $ words comm
             putStr "Out: "
             putStrLn $ showFst stack'
             calc stack'
@@ -57,6 +57,12 @@ getStack stack Nothing = do
     putStrLn "Can't perform operation"
     return stack
 getStack _ (Just stack') = return stack'
+
+parsing :: Maybe (Stack Float) -> [String] -> Maybe (Stack Float)
+parsing (Just stack) [] = Just stack
+parsing Nothing _ = Nothing
+parsing (Just stack) (c:cs) = parsing stack' cs
+    where stack' = pars stack c
 
 pars :: Stack Float -> String -> Maybe (Stack Float)
 pars (Push x (Push y stack)) "+" = Just $ push (y + x) stack
