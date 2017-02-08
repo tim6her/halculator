@@ -1,3 +1,5 @@
+import System.IO
+
 data Stack a = EmptyStack | Push a (Stack a)
     deriving (Read, Eq, Ord) 
 
@@ -37,6 +39,7 @@ main = calc EmptyStack
 calc :: Stack Float -> IO ()
 calc stack = do
     putStr "In: "
+    hFlush stdout
     comm <- getLine
     if comm == "show"
         then do
