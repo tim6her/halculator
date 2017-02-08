@@ -13,19 +13,19 @@ Currently the following functions are implemented:
   * `/`
   * `^`
 * Misc
-  * `sum`
-  * `prod`
-  * `!`
+  * `sum` (sum of all elements in stack)
+  * `prod` (product of all elements in stack)
+  * `!` (factorial)
   * `abs`
 * Constants
   * `pi`
   * `e`
 * Functions with Exponents
   * `exp`
-  * `log`
-  * `ln`
+  * `log` (logarithm with respect to Euler constant `e`)
+  * `ln` (alias for `log`)
   * `sqrt`
-  * `logBase`
+  * `logBase` (Logarithm of `x` with respect to base `y`)
 * Trigonomitry and Hyperbolics
   * `sin`
   * `cos`
@@ -40,8 +40,8 @@ Currently the following functions are implemented:
   * `acosh`
   * `atanh`
 * Control
-  * `swp`
-  * `rot`
-  * `rotl`
-  * `rotr`
-  * `clr`
+  * `swp` (swap the first to elements in stack)
+  * `rot` (rotate stack one element to the left)
+  * `rotl` (alias for `rot`)
+  * `rotr` (rotate stack one element to the right)
+  * `clr` (clear stack)
