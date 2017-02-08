@@ -52,7 +52,7 @@ pars (x:stack) "abs" = Just $ (abs x) : stack
 -- Constants
 pars stack "pi" = Just $ pi : stack
 pars stack "e" = Just $ (exp 1.0) : stack
--- Functions for Exponents
+-- Functions with Exponents
 pars (x:stack) "exp" = Just $ (exp x) : stack
 pars (x:stack) "log" = Just $ (log x) : stack
 pars stack "ln" = pars stack "log"

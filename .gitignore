@@ -2,3 +2,5 @@
 *.hi
 halc
 rechnung
+*.DS_Store
+/imgs
