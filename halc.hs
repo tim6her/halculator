@@ -32,10 +32,7 @@ updateStack stack Nothing = do
 updateStack _ (Just stack') = return stack'
 
 parsing :: Maybe Stack -> [String] -> Maybe Stack
-parsing (Just stack) [] = Just stack
-parsing Nothing _ = Nothing
-parsing (Just stack) (c:cs) = parsing stack' cs
-    where stack' = pars stack c
+parsing = foldl (\mstack com -> mstack >>= flip pars com)
 
 pars :: Stack -> String -> Maybe Stack
 -- Operators
