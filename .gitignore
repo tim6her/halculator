@@ -1,6 +1,6 @@
 *.o
 *.hi
-halc
+Halc
 rechnung
 *.DS_Store
 /imgs
