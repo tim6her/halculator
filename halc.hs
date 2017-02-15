@@ -1,9 +1,33 @@
+{-|
+Module      : Halc
+Description : The backbone of the executable
+Copyright   : (c) Tim B. Herbstrith, 2017
+License     : MIT
+Maintainer  : tim.herbstrith@icoud.com
+Stability   : experimental
+Portability : POSIX
+
+A simple RPN calculator written in Haskell
+-}
+module Halc where
+
 import System.IO
 
+-- * Functions for user interactions
+
+-- | All numerals for computations are stored in
+--   a stack of arbitrary size
 type Stack = [Float]
 
+-- | Starts the main recursion with empty stack
 main = calc []
 
+-- | Gets command and updates stack according
+--   to user input.
+--
+--   The command "show" will print the stack.  All other
+--   inputs will be passed to parsing.  At the end 'calc'
+--   is called with the updated stack.
 calc :: Stack -> IO ()
 calc stack = do
     putStr "In: "
@@ -21,41 +45,56 @@ calc stack = do
         putStrLn $ showHead stack'
         calc stack'
 
+-- | Returns string representation of the first item
+--   on the stack.  If the stack is empty, the string
+--   "Nothing" is returned.
 showHead :: Stack -> String
 showHead [] = "Nothing"
 showHead (x:stack) = show x
 
-updateStack :: Stack -> Maybe Stack -> IO Stack
+-- | Safely updates the stack by checking first if
+--   'Maybe' 'Stack' is 'Nothing' the user will be
+--   informed and the old stack is returned.
+--   Otherwise the stack is extracted and returned.
+updateStack :: Stack        -- ^ The old stack
+            -> Maybe Stack  -- ^ Hopefully the new one
+            -> IO Stack
 updateStack stack Nothing = do 
     putStrLn "Can't perform operation"
     return stack
 updateStack _ (Just stack') = return stack'
 
+-- * Functions for parsing
+
 parsing :: Maybe Stack -> [String] -> Maybe Stack
 parsing = foldl (\mstack com -> mstack >>= flip pars com)
 
 pars :: Stack -> String -> Maybe Stack
--- Operators
+-- ** Operators
 pars (x:y:stack) "+" = Just $ (y + x) : stack
 pars (x:y:stack) "-" = Just $ (y - x) : stack
 pars (x:y:stack) "*" = Just $ (y * x) : stack
 pars (x:y:stack) "/" = Just $ (y / x) : stack
 pars (x:y:stack) "^" = Just $ (y ** x) : stack
--- Misc
+-- ** Misc
 pars stack "sum" = Just $ (sum stack) : []
 pars stack "prod" = Just $ (foldl (*) 1 stack) : []
-pars (x:stack) "!" = Just $ (fak x) : stack
+pars (x:stack) "!" = Just $ (fac x) : stack
 pars (x:stack) "abs" = Just $ (abs x) : stack
--- Constants
+pars (x:y:stack) ".." = let a = truncate y
+                            b = truncate x
+                            a' = a + signum (b - a)
+                        in Just $ map fromIntegral (reverse [a,a'..b]) ++ stack
+-- ** Constants
 pars stack "pi" = Just $ pi : stack
 pars stack "e" = Just $ (exp 1.0) : stack
--- Functions with Exponents
+-- ** Functions with Exponents
 pars (x:stack) "exp" = Just $ (exp x) : stack
 pars (x:stack) "log" = Just $ (log x) : stack
 pars stack "ln" = pars stack "log"
 pars (x:stack) "sqrt" = Just $ (sqrt x) : stack
 pars (x:y:stack) "logBase" = Just $ (logBase y x) : stack
--- Trigonomitry and Hyperbolics
+-- ** Trigonomitry and Hyperbolics
 pars (x:stack) "sin" = Just $ (sin x) : stack
 pars (x:stack) "cos" = Just $ (cos x) : stack
 pars (x:stack) "tan" = Just $ (tan x) : stack
@@ -68,7 +107,7 @@ pars (x:stack) "tanh" = Just $ (tanh x) : stack
 pars (x:stack) "asinh" = Just $ (asinh x) : stack
 pars (x:stack) "acosh" = Just $ (acosh x) : stack
 pars (x:stack) "atanh" = Just $ (atanh x) : stack
--- Control
+-- ** Control
 pars (x:y:stack) "swp" = Just $ y : x : stack
 pars stack@(x:xs) "rot" = Just $ (last stack) : (init stack)
 pars stack "rotl" = pars stack "rot"
@@ -81,10 +120,13 @@ pars stack comm
 contNum :: String -> Bool
 contNum comm = any (\ n -> n `elem` comm) ['0'..'9']
 
-fak :: Float -> Float
-fak x
+-- | A 'Float' implementation for the factorial
+--
+--   Note: Floats will be truncated.
+fac :: Float -> Float
+fac x
     | x' == 0.0 = 1.0
     | x' == 1.0 = 1.0
-    | x < 0 = error "Negativ factorial"
-    | otherwise = x' * (fak $ x' - 1.0)
+    | x < 0 = 0.0 / 0.0 -- NaN representation in GHC
+    | otherwise = x' * (fac $ x' - 1.0)
     where x' = fromIntegral (truncate x :: Int)
