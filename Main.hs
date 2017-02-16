@@ -3,7 +3,7 @@ Module      : Main
 Description : The backbone of the executable
 Copyright   : (c) Tim B. Herbstrith, 2017
 License     : MIT
-Maintainer  : tim.herbstrith@icoud.com
+Maintainer  : Please contact me via GitHub!
 Stability   : experimental
 Portability : POSIX
 
