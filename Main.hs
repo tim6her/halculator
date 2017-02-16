@@ -1,5 +1,5 @@
 {-|
-Module      : Halc
+Module      : Main
 Description : The backbone of the executable
 Copyright   : (c) Tim B. Herbstrith, 2017
 License     : MIT
@@ -9,7 +9,7 @@ Portability : POSIX
 
 A simple RPN calculator written in Haskell
 -}
-module Halc where
+module Main where
 
 import System.IO
 
