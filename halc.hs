@@ -16,18 +16,18 @@ import System.IO
 -- * Functions for user interactions
 
 -- | All numerals for computations are stored in
---   a stack of arbitrary size
+-- a stack of arbitrary size
 type Stack = [Float]
 
 -- | Starts the main recursion with empty stack
 main = calc []
 
 -- | Gets command and updates stack according
---   to user input.
+-- to user input.
 --
---   The command "show" will print the stack.  All other
---   inputs will be passed to parsing.  At the end 'calc'
---   is called with the updated stack.
+-- The command "show" will print the stack.  All other
+-- inputs will be passed to parsing.  At the end 'calc'
+-- is called with the updated stack.
 calc :: Stack -> IO ()
 calc stack = do
     putStr "In: "
@@ -38,24 +38,24 @@ calc stack = do
         putStrLn $ show (reverse stack) ++ " <-"
         calc stack 
     else do
-        stack' <- updateStack stack $ 
-                        parsing (Just stack) $ 
+        stack' <- updateStack stack $
+                        parsing stack $
                         words comm
         putStr "Out: "
         putStrLn $ showHead stack'
         calc stack'
 
 -- | Returns string representation of the first item
---   on the stack.  If the stack is empty, the string
---   "Nothing" is returned.
+-- on the stack.  If the stack is empty, the string
+-- "Nothing" is returned.
 showHead :: Stack -> String
 showHead [] = "Nothing"
 showHead (x:stack) = show x
 
 -- | Safely updates the stack by checking first if
---   'Maybe' 'Stack' is 'Nothing' the user will be
---   informed and the old stack is returned.
---   Otherwise the stack is extracted and returned.
+-- 'Maybe' 'Stack' is 'Nothing' the user will be
+-- informed and the old stack is returned.
+-- Otherwise the stack is extracted and returned.
 updateStack :: Stack        -- ^ The old stack
             -> Maybe Stack  -- ^ Hopefully the new one
             -> IO Stack
@@ -66,17 +66,48 @@ updateStack _ (Just stack') = return stack'
 
 -- * Functions for parsing
 
-parsing :: Maybe Stack -> [String] -> Maybe Stack
-parsing = foldl (\mstack com -> mstack >>= flip pars com)
+-- | Takes a list of commands and applys them
+-- sequencially to the stack.
+--
+-- If a computation fails, 'Nothing' is returned.
+--
+-- === Examples:
+-- >>> parsing [] $ words "3 2 ^ 4 2 ^ + sqrt"
+-- Just [5.0]
+-- >>> parsing [2.0] ["/"] -- Too few arguments on stack!
+-- Nothing
+parsing :: Stack -> [String] -> Maybe Stack
+parsing stack = foldl pars' mstack
+    where mstack = Just stack
+          pars' = \mstack' com -> do
+                      stack' <- mstack'
+                      pars stack' com
 
+-- | Parses command and applys the corresponding
+-- function to the first elements of the stack.
+--
+-- If the command is not recognised or there are
+-- too few numbers on the stack, 'Nothing' is
+-- returned.
+--
+-- === Examples:
+-- >>> let stack = [-6.0, 2.0]
+-- >>> pars stack "*"
+-- Just [-12.0]
+-- >>> pars stack "abs"
+-- Just [6.0,2.0]
+-- >>> pars stack ".."
+-- Just [-6.0,-5.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0]
+-- >>> pars stack "katze" -- I can't imagine such a command exists
+-- Nothing
 pars :: Stack -> String -> Maybe Stack
--- ** Operators
+-- Operators
 pars (x:y:stack) "+" = Just $ (y + x) : stack
 pars (x:y:stack) "-" = Just $ (y - x) : stack
 pars (x:y:stack) "*" = Just $ (y * x) : stack
 pars (x:y:stack) "/" = Just $ (y / x) : stack
 pars (x:y:stack) "^" = Just $ (y ** x) : stack
--- ** Misc
+-- Misc
 pars stack "sum" = Just $ (sum stack) : []
 pars stack "prod" = Just $ (foldl (*) 1 stack) : []
 pars (x:stack) "!" = Just $ (fac x) : stack
@@ -85,17 +116,19 @@ pars (x:stack) "abs" = Just $ (abs x) : stack
 pars (x:y:stack) ".." = let a = truncate y
                             b = truncate x
                             a' = a + signum (b - a)
-                        in Just $ map fromIntegral (reverse [a,a'..b]) ++ stack
--- ** Constants
+                        in Just $ map fromIntegral 
+                                          (reverse [a,a'..b])
+                                  ++ stack
+-- Constants
 pars stack "pi" = Just $ pi : stack
 pars stack "e" = Just $ (exp 1.0) : stack
--- ** Functions with Exponents
+-- Functions with Exponents
 pars (x:stack) "exp" = Just $ (exp x) : stack
 pars (x:stack) "log" = Just $ (log x) : stack
 pars stack "ln" = pars stack "log"
 pars (x:stack) "sqrt" = Just $ (sqrt x) : stack
 pars (x:y:stack) "logBase" = Just $ (logBase y x) : stack
--- ** Trigonomitry and Hyperbolics
+-- Trigonomitry and Hyperbolics
 pars (x:stack) "sin" = Just $ (sin x) : stack
 pars (x:stack) "cos" = Just $ (cos x) : stack
 pars (x:stack) "tan" = Just $ (tan x) : stack
@@ -108,7 +141,7 @@ pars (x:stack) "tanh" = Just $ (tanh x) : stack
 pars (x:stack) "asinh" = Just $ (asinh x) : stack
 pars (x:stack) "acosh" = Just $ (acosh x) : stack
 pars (x:stack) "atanh" = Just $ (atanh x) : stack
--- ** Control
+-- Control
 pars (x:y:stack) "swp" = Just $ y : x : stack
 pars stack@(x:xs) "cpy" = Just $ x : stack
 pars stack@(x:xs) "rot" = Just $ (last stack) : (init stack)
@@ -119,12 +152,16 @@ pars stack comm
     | contNum comm = Just $ (read comm) : stack
     | otherwise = Nothing
 
+-- * Operators and Helper Functions
+
+-- | Checks whether a string contains a numeral
 contNum :: String -> Bool
 contNum comm = any (\ n -> n `elem` comm) ['0'..'9']
 
--- | A 'Float' implementation for the factorial
+-- | A @Float@ implementation for the factorial
 --
---   Note: Floats will be truncated.
+-- === Note:
+-- Floats will be truncated.
 fac :: (RealFrac a, Eq a, Ord a) => a -> a
 fac x
     | x' == 0.0 = 1.0
@@ -133,9 +170,14 @@ fac x
     | otherwise = x' * (fac $ x' - 1.0)
     where x' = fromIntegral (truncate x :: Int)
 
+-- | A 'Float' implementation for "n choose r"
+--
+-- === Note:
+-- Floats will be truncated.
 nCr :: Float -> Float -> Float
 nCr n r = fromIntegral $ nCr' (truncate n) (truncate r)
 
+-- | The backbone of 'nCr'
 nCr' :: (Integral a) => a -> a -> a
 nCr' n r
     | n < r || r < 0 = div 0 0
