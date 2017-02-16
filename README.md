@@ -2,7 +2,16 @@
 A simple RPN calculator written in Haskell
 ---
 
+Ever wanted to find the expected number of heads when 
+tossing 5 coins, i.e. computing
+
+![expected value](http://latex.univie.ac.at/?%5Cmathbb%20E%5Cleft%5B%5Cmathrm%7BBinom%7D%5Cleft%285,%20%5Cfrac%7B1%7D%7B2%7D%5Cright%29%5Cright%5D%20%3D%20%5Csum_%7Bi%3D0%7D%5E5%20%7B5%20%5Cchoose%20i%7D%20%5Cleft%28%5Cfrac%7B1%7D%7B2%7D%5Cright%29%5E5),
+
+using an RPN calculator? Now you can!
+
 ![screen](https://cloud.githubusercontent.com/assets/11040405/22739387/bb2035a8-ee0b-11e6-918c-2bde440c2c97.gif)
+
+### But wait there's more
 
 Currently the following functions are implemented:
 
@@ -16,7 +25,9 @@ Currently the following functions are implemented:
   * `sum` (sum of all elements in stack)
   * `prod` (product of all elements in stack)
   * `!` (factorial)
+  * `nCr` (n choose r)
   * `abs`
+  * `..` (range between two values)
 * Constants
   * `pi`
   * `e`
@@ -41,6 +52,7 @@ Currently the following functions are implemented:
   * `atanh`
 * Control
   * `swp` (swap the first to elements in stack)
+  * `cpy` (copy first element)
   * `rot` (rotate stack one element to the left)
   * `rotl` (alias for `rot`)
   * `rotr` (rotate stack one element to the right)

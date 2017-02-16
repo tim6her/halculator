@@ -16,7 +16,7 @@ version:             0.1.0.0
 synopsis:            A simple RPN calculator written in Haskell
 
 -- A longer description of the package.
--- description:         
+-- description:
 
 -- URL for the project homepage or repository.
 homepage:            https://github.com/tim6her/halculator
@@ -67,4 +67,3 @@ executable halculator
   
   -- Base language which the package is written in.
   default-language:    Haskell2010
-  
