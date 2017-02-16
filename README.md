@@ -1,13 +1,14 @@
 # halculator
 A simple RPN calculator written in Haskell
 ---
+![status](https://travis-ci.org/tim6her/halculator.svg?branch=master)
 
 Ever wanted to find the expected number of heads when 
 tossing 5 coins, i.e. computing
 
 ![expected value](http://latex.univie.ac.at/?%5Cmathbb%20E%5Cleft%5B%5Cmathrm%7BBinom%7D%5Cleft%285,%20%5Cfrac%7B1%7D%7B2%7D%5Cright%29%5Cright%5D%20%3D%20%5Csum_%7Bi%3D0%7D%5E5%20%7B5%20%5Cchoose%20i%7D%20%5Cleft%28%5Cfrac%7B1%7D%7B2%7D%5Cright%29%5E5),
 
-using an RPN calculator? Now you can!
+using an [RPN](https://en.wikipedia.org/wiki/Reverse_Polish_notation) calculator? Now you can!
 
 ![screen](https://cloud.githubusercontent.com/assets/11040405/22739387/bb2035a8-ee0b-11e6-918c-2bde440c2c97.gif)
 

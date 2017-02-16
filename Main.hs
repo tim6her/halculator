@@ -91,7 +91,7 @@ parsing stack = foldl pars' mstack
 -- returned.
 --
 -- === Examples:
--- >>> let stack = [-6.0, 2.0]
+-- >>> let stack = [-6.0, 2.0] :: Stack
 -- >>> pars stack "*"
 -- Just [-12.0]
 -- >>> pars stack "abs"
@@ -162,6 +162,10 @@ contNum comm = any (\ n -> n `elem` comm) ['0'..'9']
 --
 -- === Note:
 -- Floats will be truncated.
+--
+-- === Example:
+-- >>> fac 4.2
+-- 24.0
 fac :: (RealFrac a, Eq a, Ord a) => a -> a
 fac x
     | x' == 0.0 = 1.0
