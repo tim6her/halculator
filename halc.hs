@@ -80,6 +80,7 @@ pars (x:y:stack) "^" = Just $ (y ** x) : stack
 pars stack "sum" = Just $ (sum stack) : []
 pars stack "prod" = Just $ (foldl (*) 1 stack) : []
 pars (x:stack) "!" = Just $ (fac x) : stack
+pars (x:y:stack) "nCr" = Just $ (nCr y x) : stack
 pars (x:stack) "abs" = Just $ (abs x) : stack
 pars (x:y:stack) ".." = let a = truncate y
                             b = truncate x
@@ -109,6 +110,7 @@ pars (x:stack) "acosh" = Just $ (acosh x) : stack
 pars (x:stack) "atanh" = Just $ (atanh x) : stack
 -- ** Control
 pars (x:y:stack) "swp" = Just $ y : x : stack
+pars stack@(x:xs) "cpy" = Just $ x : stack
 pars stack@(x:xs) "rot" = Just $ (last stack) : (init stack)
 pars stack "rotl" = pars stack "rot"
 pars (x:stack) "rotr" = Just $ stack ++ [x]
@@ -123,10 +125,21 @@ contNum comm = any (\ n -> n `elem` comm) ['0'..'9']
 -- | A 'Float' implementation for the factorial
 --
 --   Note: Floats will be truncated.
-fac :: Float -> Float
+fac :: (RealFrac a, Eq a, Ord a) => a -> a
 fac x
     | x' == 0.0 = 1.0
     | x' == 1.0 = 1.0
     | x < 0 = 0.0 / 0.0 -- NaN representation in GHC
     | otherwise = x' * (fac $ x' - 1.0)
     where x' = fromIntegral (truncate x :: Int)
+
+nCr :: Float -> Float -> Float
+nCr n r = fromIntegral $ nCr' (truncate n) (truncate r)
+
+nCr' :: (Integral a) => a -> a -> a
+nCr' n r
+    | n < r || r < 0 = div 0 0
+    | r > (div n 2) = nCr' n (n - r)
+    | r == 0 = 1
+    | r == 1 = n
+    | otherwise = (nCr' (n - 1) (r - 1)) + (nCr' (n - 1) r)
