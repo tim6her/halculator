@@ -7,4 +7,4 @@ rechnung
 .cabal-sandbox/
 cabal.sandbox.config
 dist/
-doc/
+docs/
