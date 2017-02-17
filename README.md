@@ -52,7 +52,7 @@ Currently the following functions are implemented:
   * `acosh`
   * `atanh`
 * Control
-  * `swp` (swap the first to elements in stack)
+  * `swp` (swap the first two elements in stack)
   * `cpy` (copy first element)
   * `rot` (rotate stack one element to the left)
   * `rotl` (alias for `rot`)
