@@ -6,11 +6,11 @@ A simple RPN calculator written in Haskell
 Ever wanted to find the expected number of heads when 
 tossing 5 coins, i. e., computing
 
-![expected value](imgs/binom.png),
+![expected value](https://tim6her.github.io/halculator/imgs/binom.png),
 
 using an [RPN](https://en.wikipedia.org/wiki/Reverse_Polish_notation) calculator? Now you can!
 
-![screen2](imgs/screen2.gif)
+![screen2](https://tim6her.github.io/halculator/imgs/screen2.gif)
 
 Please visit this project's
 [GithubPages](https://tim6her.github.io/halculator/index.html)
