@@ -148,6 +148,7 @@ pars stack@(x:xs) "rot" = Just $ (last stack) : (init stack)
 pars stack "rotl" = pars stack "rot"
 pars (x:stack) "rotr" = Just $ stack ++ [x]
 pars _ "clr" = Just []
+pars (x:xs) "del" = Just xs
 pars stack comm
     | contNum comm = Just $ (read comm) : stack
     | otherwise = Nothing
