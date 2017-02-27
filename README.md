@@ -58,5 +58,4 @@ Currently the following functions are implemented:
   * `rotl` (alias for `rot`)
   * `rotr` (rotate stack one element to the right)
   * `clr` (clear stack)
-
-For a documentation of the implementation please visit https://tim6her.github.io/halculator/index.html
+  * `del` (remove first element from stack)
