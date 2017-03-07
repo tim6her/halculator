@@ -79,7 +79,7 @@ updateStack _ (Just stack') = return stack'
 parsing :: Stack -> [String] -> Maybe Stack
 parsing stack = foldl pars' mstack
     where mstack = Just stack
-          pars' = \mstack' com -> do
+          pars' mstack' com = do
                       stack' <- mstack'
                       pars stack' com
 
@@ -108,11 +108,11 @@ pars (x:y:stack) "*" = Just $ (y * x) : stack
 pars (x:y:stack) "/" = Just $ (y / x) : stack
 pars (x:y:stack) "^" = Just $ (y ** x) : stack
 -- Misc
-pars stack "sum" = Just $ (sum stack) : []
-pars stack "prod" = Just $ (foldl (*) 1 stack) : []
-pars (x:stack) "!" = Just $ (fac x) : stack
-pars (x:y:stack) "nCr" = Just $ (nCr y x) : stack
-pars (x:stack) "abs" = Just $ (abs x) : stack
+pars stack "sum" = Just [sum stack]
+pars stack "prod" = Just [product stack]
+pars (x:stack) "!" = Just $ fac x : stack
+pars (x:y:stack) "nCr" = Just $ nCr y x : stack
+pars (x:stack) "abs" = Just $ abs x : stack
 pars (x:y:stack) ".." = let a = truncate y
                             b = truncate x
                             a' = a + signum (b - a)
@@ -121,43 +121,43 @@ pars (x:y:stack) ".." = let a = truncate y
                                   ++ stack
 -- Constants
 pars stack "pi" = Just $ pi : stack
-pars stack "e" = Just $ (exp 1.0) : stack
+pars stack "e" = Just $ exp 1.0 : stack
 -- Functions with Exponents
-pars (x:stack) "exp" = Just $ (exp x) : stack
-pars (x:stack) "log" = Just $ (log x) : stack
+pars (x:stack) "exp" = Just $ exp x : stack
+pars (x:stack) "log" = Just $ log x : stack
 pars stack "ln" = pars stack "log"
-pars (x:stack) "sqrt" = Just $ (sqrt x) : stack
-pars (x:y:stack) "logBase" = Just $ (logBase y x) : stack
+pars (x:stack) "sqrt" = Just $ sqrt x : stack
+pars (x:y:stack) "logBase" = Just $ logBase y x : stack
 -- Trigonomitry and Hyperbolics
-pars (x:stack) "sin" = Just $ (sin x) : stack
-pars (x:stack) "cos" = Just $ (cos x) : stack
-pars (x:stack) "tan" = Just $ (tan x) : stack
-pars (x:stack) "asin" = Just $ (asin x) : stack
-pars (x:stack) "acos" = Just $ (acos x) : stack
-pars (x:stack) "atan" = Just $ (atan x) : stack
-pars (x:stack) "sinh" = Just $ (sinh x) : stack
-pars (x:stack) "cosh" = Just $ (cosh x) : stack
-pars (x:stack) "tanh" = Just $ (tanh x) : stack
-pars (x:stack) "asinh" = Just $ (asinh x) : stack
-pars (x:stack) "acosh" = Just $ (acosh x) : stack
-pars (x:stack) "atanh" = Just $ (atanh x) : stack
+pars (x:stack) "sin" = Just $ sin x : stack
+pars (x:stack) "cos" = Just $ cos x : stack
+pars (x:stack) "tan" = Just $ tan x : stack
+pars (x:stack) "asin" = Just $ asin x : stack
+pars (x:stack) "acos" = Just $ acos x : stack
+pars (x:stack) "atan" = Just $ atan x : stack
+pars (x:stack) "sinh" = Just $ sinh x : stack
+pars (x:stack) "cosh" = Just $ cosh x : stack
+pars (x:stack) "tanh" = Just $ tanh x : stack
+pars (x:stack) "asinh" = Just $ asinh x : stack
+pars (x:stack) "acosh" = Just $ acosh x : stack
+pars (x:stack) "atanh" = Just $ atanh x : stack
 -- Control
 pars (x:y:stack) "swp" = Just $ y : x : stack
 pars stack@(x:xs) "cpy" = Just $ x : stack
-pars stack@(x:xs) "rot" = Just $ (last stack) : (init stack)
+pars stack@(x:xs) "rot" = Just $ last stack : init stack
 pars stack "rotl" = pars stack "rot"
 pars (x:stack) "rotr" = Just $ stack ++ [x]
 pars _ "clr" = Just []
 pars (x:xs) "del" = Just xs
 pars stack comm
-    | contNum comm = Just $ (read comm) : stack
+    | contNum comm = Just $ read comm : stack
     | otherwise = Nothing
 
 -- * Operators and Helper Functions
 
 -- | Checks whether a string contains a numeral
 contNum :: String -> Bool
-contNum comm = any (\ n -> n `elem` comm) ['0'..'9']
+contNum comm = any (`elem` comm) ['0'..'9']
 
 -- | A @Float@ implementation for the factorial
 --
@@ -172,7 +172,7 @@ fac x
     | x' == 0.0 = 1.0
     | x' == 1.0 = 1.0
     | x < 0 = 0.0 / 0.0 -- NaN representation in GHC
-    | otherwise = x' * (fac $ x' - 1.0)
+    | otherwise = x' * fac (x' - 1.0)
     where x' = fromIntegral (truncate x :: Int)
 
 -- | A 'Float' implementation for "n choose r"
@@ -186,7 +186,7 @@ nCr n r = fromIntegral $ nCr' (truncate n) (truncate r)
 nCr' :: (Integral a) => a -> a -> a
 nCr' n r
     | n < r || r < 0 = div 0 0
-    | r > (div n 2) = nCr' n (n - r)
+    | r > div n 2 = nCr' n (n - r)
     | r == 0 = 1
     | r == 1 = n
-    | otherwise = (nCr' (n - 1) (r - 1)) + (nCr' (n - 1) r)
+    | otherwise = nCr' (n - 1) (r - 1) + nCr' (n - 1) r
