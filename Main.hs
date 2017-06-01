@@ -12,6 +12,7 @@ A simple RPN calculator written in Haskell
 module Main where
 
 import System.IO
+import Text.Read
 
 -- * Functions for user interactions
 
@@ -100,6 +101,10 @@ parsing stack = foldl pars' mstack
 -- Just [-6.0,-5.0,-4.0,-3.0,-2.0,-1.0,0.0,1.0,2.0]
 -- >>> pars stack "katze" -- I can't imagine such a command exists
 -- Nothing
+-- >>> pars stack "4.3"
+-- Just [4.3,-6.0,2.0]
+-- >>> pars stack "4,3" -- Damn you German decimal separator
+-- Nothing
 pars :: Stack -> String -> Maybe Stack
 -- Operators
 pars (x:y:stack) "+" = Just $ (y + x) : stack
@@ -150,7 +155,7 @@ pars (x:stack) "rotr" = Just $ stack ++ [x]
 pars _ "clr" = Just []
 pars (x:xs) "del" = Just xs
 pars stack comm
-    | contNum comm = Just $ read comm : stack
+    | contNum comm = (:) <$> readMaybe comm <*> Just stack
     | otherwise = Nothing
 
 -- * Operators and Helper Functions
