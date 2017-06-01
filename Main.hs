@@ -6,13 +6,15 @@ License     : MIT
 Maintainer  : Please contact me via GitHub!
 Stability   : experimental
 Portability : POSIX
+Language    : Haskell2010
 
 A simple RPN calculator written in Haskell
 -}
 module Main where
 
 import System.IO
-import Text.Read
+import Text.Read(readMaybe)
+import Control.Applicative
 
 -- * Functions for user interactions
 
