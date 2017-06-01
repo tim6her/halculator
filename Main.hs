@@ -13,6 +13,7 @@ module Main where
 
 import System.IO
 import Text.Read
+import Control.Applicative
 
 -- * Functions for user interactions
 
