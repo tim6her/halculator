@@ -60,7 +60,7 @@ executable halculator
   -- other-extensions:    
   
   -- Other library packages from which modules are imported.
-  build-depends:       base
+  build-depends:       base >= 4.6.0.0
   
   -- Directories containing source files.
   -- hs-source-dirs:      
@@ -71,4 +71,4 @@ executable halculator
 test-suite doctest
   type: exitcode-stdio-1.0
   main-is: test/doctests.hs
-  build-depends: base, doctest >= 0.9
+  build-depends: base >= 4.6.0.0, doctest >= 0.9
