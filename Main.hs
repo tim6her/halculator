@@ -6,6 +6,7 @@ License     : MIT
 Maintainer  : Please contact me via GitHub!
 Stability   : experimental
 Portability : POSIX
+Language    : Haskell2010
 
 A simple RPN calculator written in Haskell
 -}
