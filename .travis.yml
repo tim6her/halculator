@@ -4,5 +4,6 @@ ghc:
 
 install:
   - cabal install doctest
+  - cabal install --dependencies-only
 script:
   - cabal configure --enable-tests && cabal build && cabal test
