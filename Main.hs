@@ -20,7 +20,7 @@ import Control.Applicative
 
 -- | All numerals for computations are stored in
 -- a stack of arbitrary size
-type Stack = [Float]
+type Stack = [Double]
 
 -- | Starts the main recursion with empty stack
 main = calc []
@@ -39,7 +39,7 @@ calc stack = do
     if comm == "show"
     then do
         putStrLn $ show (reverse stack) ++ " <-"
-        calc stack 
+        calc stack
     else do
         stack' <- updateStack stack $
                         parsing stack $
@@ -62,7 +62,7 @@ showHead (x:stack) = show x
 updateStack :: Stack        -- ^ The old stack
             -> Maybe Stack  -- ^ Hopefully the new one
             -> IO Stack
-updateStack stack Nothing = do 
+updateStack stack Nothing = do
     putStrLn "Can't perform operation"
     return stack
 updateStack _ (Just stack') = return stack'
@@ -123,7 +123,7 @@ pars (x:stack) "abs" = Just $ abs x : stack
 pars (x:y:stack) ".." = let a = truncate y
                             b = truncate x
                             a' = a + signum (b - a)
-                        in Just $ map fromIntegral 
+                        in Just $ map fromIntegral
                                           (reverse [a,a'..b])
                                   ++ stack
 -- Constants
@@ -166,10 +166,10 @@ pars stack comm
 contNum :: String -> Bool
 contNum comm = any (`elem` comm) ['0'..'9']
 
--- | A @Float@ implementation for the factorial
+-- | A @Double@ implementation for the factorial
 --
 -- === Note:
--- Floats will be truncated.
+-- Doubles will be truncated.
 --
 -- === Example:
 -- >>> fac 4.2
@@ -182,11 +182,11 @@ fac x
     | otherwise = x' * fac (x' - 1.0)
     where x' = fromIntegral (truncate x :: Int)
 
--- | A 'Float' implementation for "n choose r"
+-- | A @Double@ implementation for "n choose r"
 --
 -- === Note:
--- Floats will be truncated.
-nCr :: Float -> Float -> Float
+-- Doubles will be truncated.
+nCr :: Double -> Double -> Double
 nCr n r = fromIntegral $ nCr' (truncate n) (truncate r)
 
 -- | The backbone of 'nCr'
