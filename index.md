@@ -8,8 +8,7 @@ title: halculator
 Ever wanted to find the expected number of heads when
 tossing 5 coins, i. e., computing
 
-$$ \mathrm E \left[\mathrm{Binom}\left(5, \frac 12\right)\right] =
-   \sum_{i = 0}^5 i {5 \choose i} \left(\frac 12\right)^i, $$
+![expected value](imgs/binom.png)
 
 using an [RPN](https://en.wikipedia.org/wiki/Reverse_Polish_notation) calculator? Now you can!
 
