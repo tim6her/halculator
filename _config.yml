@@ -14,7 +14,8 @@ baseurl:             /halculator
 # About/contact
 author:
   name:              Tim Herbstrith
-  github:            https://www.github.com/tim6her/halculator
+
+github-repo:       https://www.github.com/tim6her/halculator
 
 # Custom vars
 version:             <a href="https://badge.fury.io/gh/tim6her%2Fhalculator"><img src="https://badge.fury.io/gh/tim6her%2Fhalculator.svg" alt="GitHub version" height="18"></a>
