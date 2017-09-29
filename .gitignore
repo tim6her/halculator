@@ -1,4 +1,6 @@
 .cabal-sandbox/
+.DS_Store
+_site/
 cabal.sandbox.config
 dist/
 *.hs

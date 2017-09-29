@@ -1,30 +1,42 @@
-# Function index
+---
+layout: page
+title: Function Index
+---
 
 Currently the following functions are implemented:
 
-* Operators
+## Operators
+
   * `+`
   * `-`
   * `*`
   * `/`
   * `^`
-* Misc
+
+## Misc
+
   * `sum` (sum of all elements in stack)
   * `prod` (product of all elements in stack)
   * `!` (factorial)
   * `nCr` (n choose r)
   * `abs`
   * `..` (range between two values)
-* Constants
+
+## Constants
+
   * `pi`
   * `e`
-* Functions with Exponents
+
+## Functions with Exponents
+
   * `exp`
   * `log` (logarithm with respect to Euler constant `e`)
   * `ln` (alias for `log`)
   * `sqrt`
   * `logBase` (Logarithm of `x` with respect to base `y`)
-* Trigonomitry and Hyperbolics
+
+##  Trigonomitry and Hyperbolics
+
   * `sin`
   * `cos`
   * `tan`
@@ -37,7 +49,9 @@ Currently the following functions are implemented:
   * `asinh`
   * `acosh`
   * `atanh`
-* Control
+
+## Control
+
   * `swp` (swap the first two elements in stack)
   * `cpy` (copy first element)
   * `rot` (rotate stack one element to the left)
