@@ -156,6 +156,11 @@ pars stack "rotl" = pars stack "rot"
 pars (x:stack) "rotr" = Just $ stack ++ [x]
 pars _ "clr" = Just []
 pars (x:xs) "del" = Just xs
+pars stack "A" = (:) <$> getMaybe stack 0 <*> Just stack
+pars stack "B" = (:) <$> getMaybe stack 1 <*> Just stack
+pars stack "C" = (:) <$> getMaybe stack 2 <*> Just stack
+pars stack "D" = (:) <$> getMaybe stack 3 <*> Just stack
+pars stack "E" = (:) <$> getMaybe stack 4 <*> Just stack
 pars stack comm
     | contNum comm = (:) <$> readMaybe comm <*> Just stack
     | otherwise = Nothing
@@ -197,3 +202,29 @@ nCr' n r
     | r == 0 = 1
     | r == 1 = n
     | otherwise = nCr' (n - 1) (r - 1) + nCr' (n - 1) r
+
+-- | Safely retrieves (l - i - 1)-th value of a list
+--
+-- === Note:
+-- The function retrieves this value because it is the
+-- i-th value that was pushed to the stack
+--
+-- === Example
+-- >>> let xs = [1..5]
+-- >>> getMaybe xs 0
+-- Just 5
+-- >>> getMaybe xs 1
+-- Just 4
+-- >>> getMaybe xs 5 -- Index to large
+-- Nothing
+-- >>> getMaybe xs (-2)
+-- Nothing
+getMaybe :: (Integral i) => [a] -> i -> Maybe a
+getMaybe [] _ = Nothing
+getMaybe xs i
+  | i < 0 = Nothing
+  | i < l = Just $ xs !! i'
+  | otherwise = Nothing
+  where
+    l = fromIntegral $ length xs
+    i' = fromIntegral (l - i - 1) :: Int
