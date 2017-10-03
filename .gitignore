@@ -8,3 +8,4 @@ rechnung
 cabal.sandbox.config
 dist/
 docs/
+_site/
