@@ -33,7 +33,7 @@ main = calc []
 -- is called with the updated stack.
 calc :: Stack -> IO ()
 calc stack = do
-    putStr "In: "
+    putStr "In:  "
     hFlush stdout
     comm <- getLine
     if comm == "show"
